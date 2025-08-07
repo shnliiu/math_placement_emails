@@ -53,15 +53,7 @@ Here's the encouraging part: the MAPE covers intermediate algebra and precalculu
 I'd recommend reviewing precalculus concepts before taking the MAPE to give yourself the best opportunity to succeed."""
     
     elif "out of state" in question_lower and ("where" in question_lower or "location" in question_lower):
-        return """Perfect question! As an out-of-state student, I have great news for you - you can take the MAPE completely online from the comfort of your own home.
-
-We've partnered with ProctorU to offer the Math Placement Exam virtually at no cost to you. The process is quite straightforward: just schedule your exam appointment at least 72 hours in advance of when you'd like to take it.
-
-While the online MAPE is available through August 31st, I'd really encourage you to aim for July 31st if possible. Taking it earlier gives you more flexibility with course scheduling and ensures everything is sorted well before you arrive on campus.
-
-If you do miss that window, don't worry - you can always take the in-person MAPE during WOW (Week of Welcome) when you arrive at Cal Poly. But honestly, taking it from home beforehand is much more convenient!
-
-Let me know if you need any help with the scheduling process."""
+        return """If you are an out-of-state student admitted for Fall 2025 at Cal Poly, you can take the Math Placement Exam (MAPE) online via the proctoring service ProctorU free of charge. You need to schedule your exam appointment at least 72 hours in advance of your desired testing time. The virtual MAPE through ProctorU is available until August 31st, but it is recommended to take it by July 31st. After that date, you would need to take the in-person MAPE during WOW week at Cal Poly's campus."""
     
     elif "ap" in question_lower and "calc" in question_lower:
         return """Regarding AP Calculus scores and math placement:
