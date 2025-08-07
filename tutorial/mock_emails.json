@@ -1,0 +1,26 @@
+[
+  {
+    "id": "email001",
+    "from": "student1@example.com",
+    "subject": "Question about MAPE",
+    "body": "Hi, I got admitted to Cal Poly and I'm not sure if I need to take the MAPE. Can you help?"
+  },
+  {
+    "id": "email002",
+    "from": "student2@example.com",
+    "subject": "AP Calc confusion",
+    "body": "I took AP Calculus AB and got a 2. Do I still need to take the math placement test?"
+  },
+  {
+    "id": "email003",
+    "from": "student3@example.com",
+    "subject": "General enrollment",
+    "body": "Do you know when enrollment opens for fall classes?"
+  },
+  {
+    "id": "email004",
+    "from": "student4@example.com",
+    "subject": "MAPE location",
+    "body": "Where do I take the MAPE if I'm out of state?"
+  }
+]
