@@ -1,38 +1,40 @@
 #importing required libraries
 import json
+import boto3
+from botocore.exceptions import ClientError
 from rag import query_rag_knowledge_base
+from config import AWS_REGION
+
+# Email configuration
+VERIFIED_EMAIL = "shannon.liu04@gmail.com"
 
 def is_math_placement_question(email_body):
     keywords = ["math placement", "MAPE", "aleks", "math class", "math eligibility", "placement test", "calculus", "ap calc"]
     return any(word.lower() in email_body.lower() for word in keywords)
 
-def compose_personalized_email(to_address, subject, body, student_question):
-    # Extract student name from email address
-    student_name = to_address.split('@')[0].replace('.', ' ').title()
-    greeting = f"Dear {student_name}," if student_name else "Dear Student,"
-    
-    return f"""
-TO: {to_address}
-SUBJECT: Re: {subject}
-BODY:
-{greeting}
-
-I hope this message finds you well! Thank you for reaching out to us regarding your math placement at Cal Poly. I'm happy to help clarify this for you.
-
-{body}
-
-I hope this information is helpful in guiding your next steps. Should you have any additional questions or need further clarification, please feel free to visit our math placement chatbot at https://mathplacement.calpoly.edu for immediate assistance.
-
-We're here to support you in your academic journey at Cal Poly, so please don't hesitate to reach out if you need anything else.
-
-Warm regards,
-Cal Poly Math Placement Team
-Mathematics Department
-California Polytechnic State University
-
----
-This is an automated response designed to provide you with immediate assistance. For urgent matters, please contact the Math Department directly.
-"""
+def send_ses_email(subject, body):
+    """Send email using AWS SES"""
+    try:
+        ses_client = boto3.client('ses', region_name=AWS_REGION)
+        
+        response = ses_client.send_email(
+            Source=f"Cal Poly Math Placement AI <{VERIFIED_EMAIL}>",
+            Destination={'ToAddresses': [VERIFIED_EMAIL]},
+            Message={
+                'Subject': {'Data': subject},
+                'Body': {'Text': {'Data': body}}
+            }
+        )
+        
+        print(f"📧 SES Message ID: {response['MessageId']}")
+        return True
+        
+    except ClientError as e:
+        print(f"❌ SES Error: {e.response['Error']['Message']}")
+        return False
+    except Exception as e:
+        print(f"❌ Error: {str(e)}")
+        return False
 
 def main():
     print("🚀 Starting AI Math Placement Agent Demo")
@@ -65,16 +67,34 @@ def main():
             # Query AWS knowledge base with personalized context
             answer = query_rag_knowledge_base(personalized_query)
             
-            # Compose personalized email response
-            reply = compose_personalized_email(email['from'], email['subject'], answer, email['body'])
+            # Send email via SES
+            student_name = email['from'].split('@')[0].replace('.', ' ').title()
+            email_body = f"""Dear {student_name},
+
+Thank you for your math placement inquiry at Cal Poly.
+
+{answer}
+
+I hope this information is helpful. If you have additional questions, please visit our math placement chatbot at https://mathplacement.calpoly.edu
+
+Best regards,
+Cal Poly Math Placement Team
+Mathematics Department
+
+---
+Original question from {email['from']}:
+{email['body']}"""
             
-            print(f"\n📧 SENDING EMAIL:")
-            print(reply)
+            # Send via AWS SES
+            if send_ses_email(f"Re: {email['subject']}", email_body):
+                print(f"\n✅ EMAIL SENT via SES")
+            else:
+                print(f"\n❌ EMAIL FAILED to send")
             print("-" * 60)
             
             responses.append({
                 "original_email": email,
-                "response": reply
+                "response": email_body
             })
         else:
             print("❌ SKIPPED: Not a math placement inquiry")
@@ -91,3 +111,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
