@@ -6,7 +6,7 @@ from rag import query_rag_knowledge_base
 from config import AWS_REGION
 
 # Email configuration
-VERIFIED_EMAIL = "shannon.liu04@gmail.com"
+VERIFIED_EMAIL = ""
 
 def is_math_placement_question(email_body):
     keywords = ["math placement", "MAPE", "aleks", "math class", "math eligibility", "placement test", "calculus", "ap calc"]
@@ -45,7 +45,7 @@ def main():
     # Load emails
     import os
     # Use absolute path to tutorial directory
-    tutorial_dir = '/Users/shannonliu/Documents/Workspace/tutorial'
+    tutorial_dir = '/Users/**/Documents/Workspace/tutorial'
     mock_emails_path = os.path.join(tutorial_dir, 'mock_emails.json')
     
     try:
