@@ -43,11 +43,23 @@ def main():
     print("=" * 60)
     
     # Load emails
+    import os
+    # Use absolute path to tutorial directory
+    tutorial_dir = '/Users/shannonliu/Documents/Workspace/tutorial'
+    mock_emails_path = os.path.join(tutorial_dir, 'mock_emails.json')
+    
     try:
-        with open('mock_emails.json', 'r') as f:
+        print(f"📁 Looking for mock emails at: {mock_emails_path}")
+        with open(mock_emails_path, 'r') as f:
             emails = json.load(f)
+        print(f"✅ Loaded {len(emails)} mock emails")
     except FileNotFoundError:
-        print("❌ mock_emails.json not found!")
+        print(f"❌ mock_emails.json not found at: {mock_emails_path}")
+        print(f"📁 Current directory: {os.getcwd()}")
+        print(f"📁 Tutorial directory: {tutorial_dir}")
+        return
+    except Exception as e:
+        print(f"❌ Error loading mock emails: {str(e)}")
         return
     
     responses = []
@@ -62,7 +74,7 @@ def main():
             print("✅ IDENTIFIED: Math placement inquiry")
             
             # Create personalized query for the knowledge base
-            personalized_query = f"Please provide a warm, friendly, yet professional response to this student's math placement question. Use a conversational tone that is helpful and encouraging. Address their specific situation directly: {email['body']}"
+            personalized_query = f"""You are a helpful and encouraging assistant for Cal Poly's math department. Your tone is nice, friendly, encouraging, welcoming, and warm. Always respond in clear, concise sentences still keeping it formal. Format your response in short, accessible paragraphs with an organized, readable style. No more than 5 sentences per paragraph. Be as helpful as possible and ensure the user does not have to email the math department. Use bullet points, bolding, italics, headers, hyperlinks, and other formatting options to separate text and make it readable. Your priority is to provide students with advice and information about the department and its courses as well as information about math placement. If the user asks about potential math placement, reply with particular courses they are eligible to take using all the information provided. State which specific Cal Poly courses the student is eligible to enroll in (e.g., A score of 5 on the AP Calculus AB exam gives you credit for MATH 141 and allows you to enroll in MATH 142), as well as their next available courses. After clarification, if the question hasn't been answered with complete certainty, tell the user to contact the math department but do not provide any email. Address their specific situation directly: {email['body']}"""
             
             # Query AWS knowledge base with personalized context
             answer = query_rag_knowledge_base(personalized_query)
@@ -71,11 +83,10 @@ def main():
             student_name = email['from'].split('@')[0].replace('.', ' ').title()
             email_body = f"""Dear {student_name},
 
-Thank you for your math placement inquiry at Cal Poly.
 
 {answer}
 
-I hope this information is helpful. If you have additional questions, please visit our math placement chatbot at https://mathplacement.calpoly.edu
+I hope this information is helpful. If you have additional questions, please visit our math placement chatbot at https://math.calpoly.edu/reqs-exams
 
 Best regards,
 Cal Poly Math Placement Team
